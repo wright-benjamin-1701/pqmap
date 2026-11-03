@@ -1,0 +1,21 @@
+[package]
+name = "pq-probe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+pq-core = { path = "../core" }
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+sha2.workspace = true
+hex.workspace = true
+rustls-pki-types.workspace = true
+x509-cert.workspace = true
+rustls = { version = "0.23", default-features = false, features = ["std","tls12","aws-lc-rs"] }
+rcgen = { version = "0.14", default-features = false, features = ["crypto","aws_lc_rs"] }
+
+[dev-dependencies]
+# (tests use rcgen + rustls already listed above)

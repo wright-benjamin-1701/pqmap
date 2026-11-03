@@ -1,0 +1,841 @@
+# Framework API catalog (plan 02): data, not code.
+# Each row is a call-site matcher. Adding a framework = adding rows.
+#
+# Pattern is a Rust regex (Rust `regex` crate). Match against a *line*.
+#
+# Confidence: `literal` 0.9, `alias` 0.75, `subclass` 0.7, `di` 0.7.
+# Base rows are `literal`; alias/subclass/di patterns are matched separately
+# by the pipeline and *add* confidence via the resolution chain.
+
+[[row]]
+lang        = "js"
+kind        = "client"
+pattern     = '\bfetch\s*\('
+api_name    = "js.fetch"
+framework   = "web"
+tls_owner_hint = "runtime"
+confidence  = 0.9
+protocol    = "https"
+
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bnew\s+\??\s*Request\s*\('
+api_name  = "js.request"
+framework = "web"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bnew\s+\??\s*WebSocket\s*\('
+api_name  = "js.web-socket"
+framework = "web"
+tls_owner_hint = "runtime"
+confidence = 0.8
+protocol  = "wss"
+
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\baxios\.(get|post|put|delete|request|head|patch)\s*\('
+api_name  = "js.axios"
+framework = "axios"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bhttps?\.(request|get)\s*\('
+api_name  = "js.http"
+framework = "node"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bnew\s+\??(EventSource)\s*\('
+api_name  = "js.event-source"
+framework = "web"
+tls_owner_hint = "runtime"
+confidence = 0.7
+
+[[row]]
+lang      = "js"
+kind      = "server"
+pattern   = '\b(app|server)\.listen\s*\('
+api_name  = "js.listen"
+framework = "express"
+tls_owner_hint = "code_inline"
+confidence = 0.7
+
+[[row]]
+lang      = "js"
+kind      = "server"
+pattern   = '\bhttps?\.create(Server)\s*\('
+api_name  = "js.create-secure-server"
+framework = "node"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "js"
+kind      = "tls-config"
+pattern   = 'tls\.createSecureContext\s*\(|createSecureContext\s*\('
+api_name  = "js.secure-context"
+framework = "node"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "js"
+kind      = "tls-config"
+pattern   = 'rejectUnauthorized\s*:\s*false|NODE_TLS_REJECT_UNAUTHORIZED'
+api_name  = "js.reject-unauthorized"
+framework = "node"
+tls_owner_hint = "code_inline"
+confidence = 0.9
+
+[[row]]
+lang      = "js"
+kind      = "crypto"
+pattern   = 'crypto\.subtle\.(sign|verify|decrypt|encrypt)\s*\(|crypto\.(createCipheriv|createDecipheriv|generateKeyPair|sign|verify)\s*\('
+api_name  = "js.node-crypto"
+framework = "node"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+# ---- JS: Fastify ----
+[[row]]
+lang      = "js"
+kind      = "server"
+pattern   = '\bfastify\.(listen|register)\s*\('
+api_name  = "js.fastify"
+framework = "fastify"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- JS: Koa ----
+[[row]]
+lang      = "js"
+kind      = "server"
+pattern   = '\bnew\s+Koa\s*\('
+api_name  = "js.koa"
+framework = "koa"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- JS: undici ----
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bundici\.(request|fetch)\s*\('
+api_name  = "js.undici"
+framework = "undici"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+# ---- JS: got ----
+[[row]]
+lang      = "js"
+kind      = "client"
+pattern   = '\bgot\.(get|post|put|delete|patch|head)\s*\('
+api_name  = "js.got"
+framework = "got"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+# ---- TypeScript ----
+[[row]]
+lang      = "ts"
+kind      = "client"
+pattern   = '\bfetch\s*\(|\bnew\s+\??\s*Request\s*\(|\bnew\s+\??\s*WebSocket\s*\('
+api_name  = "ts.web-fetch"
+framework = "web"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "ts"
+kind      = "client"
+pattern   = '\baxios\.(get|post|put|delete|request|head|patch)\s*\('
+api_name  = "ts.axios"
+framework = "axios"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "ts"
+kind      = "client"
+pattern   = '\bhttps?\.(request|get)\s*\('
+api_name  = "ts.http"
+framework = "node"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "ts"
+kind      = "server"
+pattern   = '\b(app|server)\.listen\s*\(|\bhttps?\.createServer\s*\('
+api_name  = "ts.listen"
+framework = "node"
+tls_owner_hint = "code_inline"
+confidence = 0.7
+
+[[row]]
+lang      = "ts"
+kind      = "crypto"
+pattern   = 'crypto\.subtle\.(sign|verify)\s*\(|crypto\.(createCipheriv|createDecipheriv)\s*\('
+api_name  = "ts.node-crypto"
+framework = "node"
+tls_owner_hint = "code_inline"
+confidence = 0.7
+
+# ---- TS: NestJS ----
+[[row]]
+lang      = "ts"
+kind      = "server"
+pattern   = '\bNestFactory\.create\s*\('
+api_name  = "ts.nestjs"
+framework = "nestjs"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- TS: Next.js ----
+[[row]]
+lang      = "ts"
+kind      = "server"
+pattern   = '\bNextResponse\b|\bgetServerSideProps\b'
+api_name  = "ts.nextjs"
+framework = "next.js"
+tls_owner_hint = "runtime"
+confidence = 0.75
+
+# ---- TS: undici ----
+[[row]]
+lang      = "ts"
+kind      = "client"
+pattern   = '\bundici\.(request|fetch)\s*\('
+api_name  = "ts.undici"
+framework = "undici"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+# ---- C# / .NET ----
+[[row]]
+lang      = "cs"
+kind      = "client"
+pattern   = '\bnew\s+HttpClient\b'
+api_name  = "cs.http-client"
+framework = "system.net"
+tls_owner_hint = "runtime"
+confidence = 0.9
+protocol  = "https"
+
+[[row]]
+lang      = "cs"
+kind      = "client"
+pattern   = '\bIHttpClientFactory\b|AddHttpClient\s*\('
+api_name  = "cs.http-client-factory"
+framework = "system.net"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "cs"
+kind      = "client"
+pattern   = '\bSslStream\b\s*\.|SslStream\.AuthenticateAs'
+api_name  = "cs.ssl-stream"
+framework = "system.net"
+tls_owner_hint = "code_inline"
+confidence = 0.85
+
+[[row]]
+lang      = "cs"
+kind      = "client"
+pattern   = '\bGrpc\.Channel\b|GrpcChannel\.ForAddress'
+api_name  = "cs.grpc"
+framework = "grpc"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "grpc"
+
+[[row]]
+lang      = "cs"
+kind      = "client"
+pattern   = '\bnew\s+ClientWebSocket\s*\('
+api_name  = "cs.client-websocket"
+framework = "system.net"
+tls_owner_hint = "runtime"
+confidence = 0.8
+protocol  = "wss"
+
+[[row]]
+lang      = "cs"
+kind      = "server"
+pattern   = '\bWebApplication\.CreateBuilder\b|\bCreateBuilder\s*<[A-Z]\w*>\s*\('
+api_name  = "cs.web-app"
+framework = "aspnet-core"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "cs"
+kind      = "server"
+pattern   = '\.UseHttps\s*\(|\bKestrelServerOptions\b'
+api_name  = "cs.kestrel-https"
+framework = "aspnet-core"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "cs"
+kind      = "tls-config"
+pattern   = 'SslOptions\s*=|SslProtocols\s*=|CipherSuitesPolicy'
+api_name  = "cs.ssl-options"
+framework = "system.net"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "cs"
+kind      = "tls-config"
+pattern   = 'RemoteCertificateValidate[drn]Callback'
+api_name  = "cs.cert-callback"
+framework = "system.net"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "cs"
+kind      = "crypto"
+pattern   = '(RSA|ECDSA|ECDsa|SHA256|HMAC|AesGcm)\.(Create|Sign|Verify|Transform|HashData)\s*\('
+api_name  = "cs.sscrypt"
+framework = "system"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "cs"
+kind      = "crypto"
+pattern   = '\bRS256\b|\bES256\b'
+api_name  = "cs.jwt-sign"
+framework = "jwt"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+# ---- Python ----
+[[row]]
+lang      = "py"
+kind      = "client"
+pattern   = '\brequests\.(get|post|put|delete|head|patch|request)\s*\('
+api_name  = "py.requests"
+framework = "requests"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "py"
+kind      = "client"
+pattern   = '\bhttpx\.(get|post|put|delete|head|patch|request)\s*\(|\bhttpx\.(Async)?Client'
+api_name  = "py.httpx"
+framework = "httpx"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "py"
+kind      = "client"
+pattern   = '\burllib\.request\..*\('
+api_name  = "py.urllib"
+framework = "urllib"
+tls_owner_hint = "runtime"
+confidence = 0.8
+protocol  = "https"
+
+[[row]]
+lang      = "py"
+kind      = "client"
+pattern   = '\baiohttp\.(ClientSession|get|post)\b'
+api_name  = "py.aiohttp"
+framework = "aiohttp"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "https"
+
+[[row]]
+lang      = "py"
+kind      = "client"
+pattern   = '\bwebsockets\.(connect|Client)\b|\bgrpc\.(secure_channel|insecure_channel)\b'
+api_name  = "py.ws-grpc"
+framework = "websockets/grpc"
+tls_owner_hint = "library"
+confidence = 0.7
+
+[[row]]
+lang      = "py"
+kind      = "server"
+pattern   = '\buvicorn\.run\s*\(|\bFastAPI\s*\(|\bflask\.Flask\s*\('
+api_name  = "py.server"
+framework = "fastapi"
+tls_owner_hint = "code_inline"
+confidence = 0.7
+
+[[row]]
+lang      = "py"
+kind      = "tls-config"
+pattern   = 'verify\s*=\s*False|check_hostname\s*=\s*False|ssl\._create_unverified'
+api_name  = "py.reject-verify"
+framework = "py"
+tls_owner_hint = "code_inline"
+confidence = 0.9
+
+[[row]]
+lang      = "py"
+kind      = "tls-config"
+pattern   = 'ssl\.SSLContext|ctx\.wrap_socket'
+api_name  = "py.tls-context"
+framework = "py"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "py"
+kind      = "crypto"
+pattern   = 'cryptography\.hazmat\.primitives\.asymmetric\.(rsa|ec|ed25519)\b|cryptography\.x509\b|\bPyJWT\b|\bjwc\b'
+api_name  = "py.cryptography"
+framework = "py"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+# ---- Py: Django ----
+[[row]]
+lang      = "py"
+kind      = "server"
+pattern   = '\bdjango\b.*settings\b|WSGI_APPLICATION'
+api_name  = "py.django"
+framework = "django"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Py: Starlette ----
+[[row]]
+lang      = "py"
+kind      = "server"
+pattern   = '\bStarlette\s*\('
+api_name  = "py.starlette"
+framework = "starlette"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Py: Tornado ----
+[[row]]
+lang      = "py"
+kind      = "server"
+pattern   = '\btornado\.web\.Application\b'
+api_name  = "py.tornado"
+framework = "tornado"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Py: Sanic ----
+[[row]]
+lang      = "py"
+kind      = "server"
+pattern   = '\bSanic\s*\('
+api_name  = "py.sanic"
+framework = "sanic"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Java ----
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bHttpURLConnection\b|\bopenConnection\s*\('
+api_name  = "java.url-connection"
+framework = "java.net"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bOkHttpClient\b|\bnew\s+OkHttpClient'
+api_name  = "java.okhttp"
+framework = "okhttp"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bCloseableHttpClient\b|\bHttpClients\.create'
+api_name  = "java.apache-http"
+framework = "apache-http"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bWebClient\.(create|builder)\s*\(|\bRestTemplate\b'
+api_name  = "java.spring-web"
+framework = "spring-boot"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "java"
+kind      = "server"
+pattern   = '@(RestController|GetMapping|PostMapping|PutMapping|DeleteMapping|RequestMapping)\b'
+api_name  = "java.spring-controller"
+framework = "spring-boot"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "java"
+kind      = "server"
+pattern   = '\bSpringApplication\.run\s*\('
+api_name  = "java.spring-run"
+framework = "spring-boot"
+tls_owner_hint = "runtime"
+confidence = 0.7
+
+[[row]]
+lang      = "java"
+kind      = "tls-config"
+pattern   = '\bSSLContext\.(getInstance|getDefault)\s*\('
+api_name  = "java.ssl-context"
+framework = "javax.net.ssl"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bNettyChannelBuilder\b|\bEventLoopGroup\b'
+api_name  = "java.netty"
+framework = "netty"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "https"
+
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bManagedChannelBuilder\b|\bManagedChannel\b'
+api_name  = "java.grpc"
+framework = "grpc-java"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "grpc"
+
+[[row]]
+lang      = "java"
+kind      = "crypto"
+pattern   = '\bKeyPairGenerator\.(getInstance)\s*\(|\bCipher\.(getInstance)\s*\(|\bSignature\.(getInstance)\s*\('
+api_name  = "java.jca-crypto"
+framework = "jca"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+# ---- Java: Quarkus ----
+[[row]]
+lang      = "java"
+kind      = "server"
+pattern   = '@Path\b.*javax\.ws\.rs\b|\bio\.quarkus\b'
+api_name  = "java.quarkus"
+framework = "quarkus"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Java: Micronaut ----
+[[row]]
+lang      = "java"
+kind      = "server"
+pattern   = '\bio\.micronaut\b'
+api_name  = "java.micronaut"
+framework = "micronaut"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Java: Vert.x (server) ----
+[[row]]
+lang      = "java"
+kind      = "server"
+pattern   = '\bVertx\b|\bAbstractVerticle\b'
+api_name  = "java.vertx-server"
+framework = "vertx"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Java: Vert.x (client) ----
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bvertx\.ext\.web\.client\b'
+api_name  = "java.vertx-client"
+framework = "vertx"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "https"
+
+# ---- Java: Retrofit ----
+[[row]]
+lang      = "java"
+kind      = "client"
+pattern   = '\bRetrofit\.Builder\b'
+api_name  = "java.retrofit"
+framework = "retrofit"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+# ---- Go ----
+[[row]]
+lang      = "go"
+kind      = "client"
+pattern   = '\bhttp\.(Get|Post|Head|PostForm)\s*\('
+api_name  = "go.http-shorthand"
+framework = "net/http"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "go"
+kind      = "client"
+pattern   = '\bhttp\.Client\b|\.Do\s*\('
+api_name  = "go.http-client"
+framework = "net/http"
+tls_owner_hint = "runtime"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\bhttp\.ListenAndServe(TLS)?\s*\('
+api_name  = "go.listen-serve"
+framework = "net/http"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\bhttp\.HandleFunc\s*\(|\bhttp\.Handle\s*\('
+api_name  = "go.handle-func"
+framework = "net/http"
+tls_owner_hint = "runtime"
+confidence = 0.7
+
+[[row]]
+lang      = "go"
+kind      = "tls-config"
+pattern   = '\btls\.Config\b'
+api_name  = "go.tls-config"
+framework = "crypto/tls"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+[[row]]
+lang      = "go"
+kind      = "client"
+pattern   = '\bgrpc\.Dial\b|\bgrpc\.NewClient\b'
+api_name  = "go.grpc"
+framework = "grpc-go"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "grpc"
+
+[[row]]
+lang      = "go"
+kind      = "client"
+pattern   = '\bfasthttp\.(Get|Do|AcquireRequest)\b'
+api_name  = "go.fasthttp"
+framework = "fasthttp"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "https"
+
+[[row]]
+lang      = "go"
+kind      = "crypto"
+pattern   = '\bcrypto/(rsa|ecdsa|ed25519|elliptic)\b|\brsa\.(GenerateKey|SignPKCS)\b|\becdsa\.(Sign|Verify)\b'
+api_name  = "go.crypto"
+framework = "crypto"
+tls_owner_hint = "code_inline"
+confidence = 0.8
+
+# ---- Go: gin ----
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\bgin\.(Default|New)\s*\('
+api_name  = "go.gin"
+framework = "gin"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Go: echo ----
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\becho\.New\s*\('
+api_name  = "go.echo"
+framework = "echo"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Go: chi ----
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\bchi\.(NewRouter|Router)\s*\('
+api_name  = "go.chi"
+framework = "chi"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Go: fiber ----
+[[row]]
+lang      = "go"
+kind      = "server"
+pattern   = '\bfiber\.New\s*\('
+api_name  = "go.fiber"
+framework = "fiber"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+# ---- Go: resty (client) ----
+[[row]]
+lang      = "go"
+kind      = "client"
+pattern   = '\bresty\.New\s*\('
+api_name  = "go.resty"
+framework = "resty"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+# ---- Rust ----
+[[row]]
+lang      = "rust"
+kind      = "client"
+pattern   = '\breqwest::(get|Client)\b|\breqwest::Client::new\s*\('
+api_name  = "rust.reqwest"
+framework = "reqwest"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "rust"
+kind      = "client"
+pattern   = '\bureq::(get|agent)\b|\bureq::Agent\b'
+api_name  = "rust.ureq"
+framework = "ureq"
+tls_owner_hint = "library"
+confidence = 0.85
+protocol  = "https"
+
+[[row]]
+lang      = "rust"
+kind      = "server"
+pattern   = '\bactix_web::(App|HttpServer)\b|\bHttpServer::new\s*\('
+api_name  = "rust.actix-web"
+framework = "actix-web"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "server"
+pattern   = '\baxum::(Router|serve)\b|\bRouter::new\s*\('
+api_name  = "rust.axum"
+framework = "axum"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "server"
+pattern   = '\bwarp::serve\b|\bwarp::Filter\b'
+api_name  = "rust.warp"
+framework = "warp"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "server"
+pattern   = '\brocket::(launch|ignite|routes)\b|#\[rocket::main\]'
+api_name  = "rust.rocket"
+framework = "rocket"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "server"
+pattern   = '\bhyper::(server|Server)\b|\bServer::bind\s*\('
+api_name  = "rust.hyper-server"
+framework = "hyper"
+tls_owner_hint = "runtime"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "client"
+pattern   = '\bhyper::(client|Client)\b|\bClient::new\s*\('
+api_name  = "rust.hyper-client"
+framework = "hyper"
+tls_owner_hint = "library"
+confidence = 0.8
+protocol  = "https"
+
+[[row]]
+lang      = "rust"
+kind      = "tls-config"
+pattern   = '\brustls::\w+|ServerConfig::builder\s*\(|ClientConfig::builder\s*\('
+api_name  = "rust.rustls"
+framework = "rustls"
+tls_owner_hint = "library"
+confidence = 0.85
+
+[[row]]
+lang      = "rust"
+kind      = "tls-config"
+pattern   = '\bnative_tls::\w+|TlsConnector::builder\s*\('
+api_name  = "rust.native-tls"
+framework = "native-tls"
+tls_owner_hint = "os"
+confidence = 0.8
+
+[[row]]
+lang      = "rust"
+kind      = "crypto"
+pattern   = '\bring::\w+|\bring::aead\b|\bring::signature\b|\bring::agreement\b'
+api_name  = "rust.ring"
+framework = "ring"
+tls_owner_hint = "library"
+confidence = 0.8

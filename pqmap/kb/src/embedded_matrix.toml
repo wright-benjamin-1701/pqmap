@@ -1,0 +1,469 @@
+# pqmap curated crypto-capability matrix (plan 03)
+# --------------------------------------------------
+# This file is THE load-bearing asset. Every row MUST carry `source_url` +
+# `as_of` (provenance). A row whose `as_of` is stale or whose `source_url` is
+# unreachable resolves to `pq-unknown` (never a stale `true`) — plan 03.
+#
+# Tri-state: `pq_kem = true` → capable, `pq_kem = false` → unavailable,
+# `pq_kem_unknown = true` → unknown (prefer over guessing). `verified = true`
+# rows are human-approved and not downgraded by the drift job.
+# Adding a framework = adding rows (data, not code).
+
+[[infra]]
+row_id     = "aws-alb"
+vendor     = "aws"
+kind       = "alb"
+pq_kem     = false
+pq_sig     = false
+note       = "AWS ALB does not negotiate PQ KEM (as of seed; re-verify)"
+source_url = "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html"
+as_of      = "2025-09-10"
+verified   = false
+
+[[infra]]
+row_id     = "aws-cloudfront"
+vendor     = "aws"
+kind       = "cloudfront"
+pq_kem     = true
+pq_sig     = false
+note       = "CloudFront offers PQ hybrid key agreement to compatible clients"
+source_url = "https://aws.amazon.com/blogs/aws/announcing-quantum-safe-key-agreement-for-amazon-cloudfront/"
+as_of      = "2025-09-10"
+verified   = false
+
+[[infra]]
+row_id     = "cloudflare-edge"
+vendor     = "cf"
+kind       = "edge"
+pq_kem     = true
+pq_sig     = false
+note       = "Cloudflare edge → client: PQ hybrid available"
+source_url = "https://developers.cloudflare.com/ssl/quantum-safe-tls/"
+as_of      = "2025-09-10"
+verified   = false
+
+[[infra]]
+row_id     = "nginx-openssl35"
+vendor     = "nginx"
+kind       = "reverse_proxy"
+pq_kem     = true
+pq_sig     = false
+note       = "nginx with OpenSSL ≥ 3.5 : PQ KEM available"
+source_url = "https://nginx.org/en/docs/http/ngx_http_ssl_module.html"
+as_of      = "2025-09-10"
+verified   = false
+
+[[crypto]]
+row_id      = "openssl-3.5-linux"
+runtime     = "openssl"
+version_min = "3.5"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768", "SecP256r1MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://www.openssl.org/news/changes.html#OpenSSL-3.5.0"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "openssl-3.5-windows"
+runtime     = "openssl"
+version_min = "3.5"
+platform    = "windows"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://www.openssl.org/news/changes.html#OpenSSL-3.5.0"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "openssl-3.5-macos"
+runtime     = "openssl"
+version_min = "3.5"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://www.openssl.org/news/changes.html#OpenSSL-3.5.0"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "openssl-3.0"
+runtime     = "openssl"
+version_min = "3.0"
+platform    = "any"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://www.openssl.org/news/changes.html"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "node-22-linux"
+runtime     = "node"
+version_min = "22.0.0"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "node-openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768", "SecP256r1MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://nodejs.org/download/release/latest-v22.x/"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "node-22-macos"
+runtime     = "node"
+version_min = "22.0.0"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "node-openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://nodejs.org/download/release/latest-v22.x/"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "node-20-linux"
+runtime     = "node"
+version_min = "20.0.0"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "node-openssl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://nodejs.org/download/release/latest-v20.x/"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "dotnet-net10-linux"
+runtime     = "dotnet"
+version_min = "10.0.0"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "dotnet-net10-windows"
+runtime     = "dotnet"
+version_min = "10.0.0"
+platform    = "windows"
+tls_impl    = "schannel"
+provider    = "schannel"
+pq_kem      = false
+pq_kem_unknown = true
+pq_sig      = false
+pq_sig_unknown = true
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "dotnet-net8-linux"
+runtime     = "dotnet"
+version_min = "8.0.0"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "dotnet-net8-windows"
+runtime     = "dotnet"
+version_min = "8.0.0"
+platform    = "windows"
+tls_impl    = "schannel"
+provider    = "schannel"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "python-3.12-linux"
+runtime     = "python"
+version_min = "3.12.0"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "openssl"
+# Python 3.12 does not ship PQ by default (OpenSSL 3.x is classical until
+# the OS / OpenSSL upgrade enables hybrid groups — see openssl-3.5-*).
+# `pq_kem=false` means "classical only" (deterministic, gradeable C or D
+# via remediation), NOT "we don't know".
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://docs.python.org/3/library/ssl.html"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "python-3.12-macos"
+runtime     = "python"
+version_min = "3.12.0"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "libressl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://docs.python.org/3/library/ssl.html"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- Java (JVM) ---
+
+[[crypto]]
+row_id      = "jvm-21-bc-linux"
+runtime     = "jvm"
+version_min = "21"
+platform    = "linux"
+tls_impl    = "bouncycastle"
+provider    = "bouncycastle-jsse"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://www.bouncycastle.org/latest_releases.html"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "jvm-21-bc-windows"
+runtime     = "jvm"
+version_min = "21"
+platform    = "windows"
+tls_impl    = "bouncycastle"
+provider    = "bouncycastle-jsse"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://www.bouncycastle.org/latest_releases.html"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "jvm-17-default"
+runtime     = "jvm"
+version_min = "17"
+platform    = "any"
+tls_impl    = "openssl"
+provider    = "sunpkcs11"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://docs.oracle.com/en/java/javase/17/security/java-secure-socket-extension-jsse-reference-guide.html"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- Go ---
+
+[[crypto]]
+row_id      = "go-1.24-linux"
+runtime     = "go"
+version_min = "1.24"
+platform    = "linux"
+tls_impl    = "openssl"
+provider    = "crypto/tls"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://go.dev/doc/go1.24#crypto/tls"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "go-1.22-any"
+runtime     = "go"
+version_min = "1.22"
+platform    = "any"
+tls_impl    = "openssl"
+provider    = "crypto/tls"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://go.dev/doc/go1.22"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- Go: Windows / macOS ---
+
+[[crypto]]
+row_id      = "go-1.24-windows"
+runtime     = "go"
+version_min = "1.24"
+platform    = "windows"
+tls_impl    = "openssl"
+provider    = "crypto/tls"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://go.dev/doc/go1.24#crypto/tls"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "go-1.24-macos"
+runtime     = "go"
+version_min = "1.24"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "crypto/tls"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://go.dev/doc/go1.24#crypto/tls"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- Python: Windows ---
+
+[[crypto]]
+row_id      = "python-3.12-windows"
+runtime     = "python"
+version_min = "3.12.0"
+platform    = "windows"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = false
+source_url  = "https://docs.python.org/3/library/ssl.html"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- .NET: macOS ---
+
+[[crypto]]
+row_id      = "dotnet-net10-macos"
+runtime     = "dotnet"
+version_min = "10.0.0"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+[[crypto]]
+row_id      = "dotnet-net8-macos"
+runtime     = "dotnet"
+version_min = "8.0.0"
+platform    = "macos"
+tls_impl    = "openssl"
+provider    = "openssl"
+pq_kem      = false
+pq_sig      = false
+min_tls     = "1.2"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://learn.microsoft.com/en-us/dotnet/core/versions"
+as_of       = "2025-09-10"
+verified    = false
+
+# --- Node.js: Windows ---
+
+[[crypto]]
+row_id      = "node-22-windows"
+runtime     = "node"
+version_min = "22.0.0"
+platform    = "windows"
+tls_impl    = "openssl"
+provider    = "node-openssl"
+pq_kem      = true
+pq_sig      = false
+pq_kem_groups = ["X25519MLKEM768"]
+min_tls     = "1.3"
+alpn        = ["h2", "http/1.1"]
+quic        = true
+source_url  = "https://nodejs.org/download/release/latest-v22.x/"
+as_of       = "2025-09-10"
+verified    = false

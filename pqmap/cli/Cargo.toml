@@ -1,0 +1,26 @@
+[package]
+name = "pqmap"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "pqmap — PQC (post-quantum cryptography) migration control plane"
+
+[[bin]]
+name = "pqmap"
+path = "src/main.rs"
+
+[dependencies]
+pq-core = { path = "../core" }
+pq-kb = { path = "../kb" }
+pq-analyzers = { path = "../analyzers" }
+pq-scoring = { path = "../scoring" }
+pq-probe = { path = "../probe" }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+toml.workspace = true
+regex.workspace = true
+walkdir = "2"
+semver.workspace = true
